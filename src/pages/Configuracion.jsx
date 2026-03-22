@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 
-const BASE_URL = "http://localhost:8081";
+const BASE_URL = "https://panelcontrol-backend-production.up.railway.app";
 
 const getConfiguracion = async (token) => {
     const response = await fetch(`${BASE_URL}/configuracion`, {

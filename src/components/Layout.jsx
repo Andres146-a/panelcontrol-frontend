@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-const BASE_URL = "http://localhost:8081";
+const BASE_URL = "https://panelcontrol-backend-production.up.railway.app";
 
 const tipoNotif = {
     ERROR:    { color: '#c0392b', bg: '#fdecea', border: '#f5c6c2' },
