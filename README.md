@@ -2,6 +2,7 @@
 
 Sistema de gestión empresarial desarrollado a medida para **SuperMetal Seconds** (`supermetalseconds.com`). Centraliza la administración de correos corporativos, usuarios del panel y el estado de los servicios del dominio, integrándose en tiempo real con cPanel vía API.
 
+**Motivos de seguridad**: No hizo publico el repositorio del backend para no comprometer datos sensibles. 
 
 ---
 
