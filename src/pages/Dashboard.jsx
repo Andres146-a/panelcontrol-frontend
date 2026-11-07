@@ -216,18 +216,14 @@ if (emailsData.status === 'fulfilled')
                                 </div>
                             )}
                         </div>
-                        <div className="grid grid-cols-3 border-t border-panel-border">
+                        <div className="grid grid-cols-2 border-t border-panel-border">
                             <div className="px-5 py-4 border-r border-panel-border">
                                 <div className="text-xs font-semibold text-panel-text3 uppercase tracking-wide mb-1">Logins hoy</div>
                                 <div className="text-xl font-bold text-panel-text">{loading ? '...' : loginsHoy}</div>
                             </div>
-                            <div className="px-5 py-4 border-r border-panel-border">
-                                <div className="text-xs font-semibold text-panel-text3 uppercase tracking-wide mb-1">Usuarios activos</div>
-                                <div className="text-xl font-bold text-panel-text">{stats.totalUsuarios || 0}</div>
-                            </div>
                             <div className="px-5 py-4">
-                                <div className="text-xs font-semibold text-panel-text3 uppercase tracking-wide mb-1">Uptime</div>
-                                <div className="text-xl font-bold text-panel-text">99.8%</div>
+                                <div className="text-xs font-semibold text-panel-text3 uppercase tracking-wide mb-1">Usuarios del panel</div>
+                                <div className="text-xl font-bold text-panel-text">{stats.totalUsuarios || 0}</div>
                             </div>
                         </div>
                     </div>

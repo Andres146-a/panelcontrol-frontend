@@ -127,7 +127,7 @@ const Configuracion = () => {
                 <InfoCard title="Información del sistema" items={[
                     { label: 'Framework', value: 'Spring Boot 3.5', mono: true },
                     { label: 'Lenguaje', value: 'Java 21', mono: true },
-                    { label: 'Base de datos', value: 'SQL Server', mono: true },
+                    { label: 'Base de datos', value: 'PostgreSQL', mono: true },
                     { label: 'Frontend', value: 'React + Vite + Tailwind CSS v4', mono: true },
                     { label: 'Integración cPanel', value: 'UAPI · Puerto 2083', mono: true },
                 ]} />
