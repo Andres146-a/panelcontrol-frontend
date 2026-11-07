@@ -1,5 +1,5 @@
 import { data } from "react-router-dom";
-const BASE_URL = "https://panelcontrol-backend-production.up.railway.app";
+import { BASE_URL } from "../config";
 
 export const login = async (email, password) => {
     const response = await fetch(`${BASE_URL}/auth/login`, {
