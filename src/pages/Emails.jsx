@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEmails, crearEmail, cambiarPasswordEmail, eliminarEmail } from '../services/api';
+import { getEmails, crearEmail, cambiarPasswordEmail, eliminarEmail, abrirBuzon } from '../services/api';
 import Layout from '../components/Layout';
 
 const DOMINIO_CLIENTE = 'supermetalseconds.com';
@@ -60,8 +60,13 @@ const Emails = () => {
     const formCrearInicial = { email: '', password: '', quota: 0 };
     const [formCrear, setFormCrear]         = useState(formCrearInicial);
     const [nuevaPassword, setNuevaPassword] = useState('');
+    const [modalBuzon, setModalBuzon]       = useState(null);
+    const [motivo, setMotivo]               = useState('');
     const navigate = useNavigate();
     const token    = sessionStorage.getItem("token");
+    const rol      = sessionStorage.getItem("rol") || 'USER';
+    const puedeAbrirBuzon = rol === 'ADMIN' || rol === 'AUDITOR';
+    const puedeGestionar  = rol === 'ADMIN';
 
     const fetchEmails = async () => {
         if (!token) { navigate("/"); return; }
@@ -102,6 +107,23 @@ const Emails = () => {
         finally { setActionLoading(false); }
     };
 
+    const handleAbrirBuzon = async () => {
+        setError('');
+        if (motivo.trim().length < 10) { setError('Describe el motivo (mínimo 10 caracteres).'); return; }
+        setActionLoading(true);
+        // La ventana se abre antes del await para que el navegador no bloquee el popup.
+        const ventana = window.open('', '_blank');
+        try {
+            const url = await abrirBuzon(token, modalBuzon, motivo.trim());
+            if (ventana) { ventana.opener = null; ventana.location.href = url; } else { window.location.href = url; }
+            setModalBuzon(null); setMotivo('');
+        } catch (err) {
+            if (ventana) ventana.close();
+            setError(err.message || 'No se pudo abrir el buzón.');
+        }
+        finally { setActionLoading(false); }
+    };
+
     const handleEliminar = async () => {
         setActionLoading(true);
         try { await eliminarEmail(token, modalEliminar); await fetchEmails(); setModalEliminar(null); }
@@ -139,6 +161,20 @@ const Emails = () => {
                     </Field>
                     {error && <div style={{ fontSize: '12px', color: '#c0392b', marginBottom: '8px' }}>{error}</div>}
                     <ModalFooter onClose={() => { setModalPassword(null); setError(''); setNuevaPassword(''); }} onConfirm={handleCambiarPassword} confirmLabel="Cambiar contraseña" loading={actionLoading} />
+                </Modal>
+            )}
+
+            {/* MODAL ABRIR BUZON */}
+            {modalBuzon && (
+                <Modal title="Abrir buzón (acceso supervisado)" onClose={() => { setModalBuzon(null); setError(''); setMotivo(''); }}>
+                    <div className="dm-surface2" style={{ fontSize: '13px', color: 'var(--color-panel-text3)', marginBottom: '16px', padding: '10px 14px', fontFamily: "'IBM Plex Mono', monospace" }}>
+                        {modalBuzon}
+                    </div>
+                    <Field label="Motivo del acceso" hint="Obligatorio. Queda registrado junto con tu usuario, la fecha y tu IP.">
+                        <textarea className="dm-input" rows={3} maxLength={300} placeholder="Ej: Revisión por reclamo del cliente X, orden de gerencia" value={motivo} onChange={e => setMotivo(e.target.value)} />
+                    </Field>
+                    {error && <div style={{ fontSize: '12px', color: '#c0392b', marginBottom: '8px' }}>{error}</div>}
+                    <ModalFooter onClose={() => { setModalBuzon(null); setError(''); setMotivo(''); }} onConfirm={handleAbrirBuzon} confirmLabel="Abrir buzón" loading={actionLoading} />
                 </Modal>
             )}
 
@@ -220,12 +256,19 @@ const Emails = () => {
                                         <td className="panel-td"><Badge activo={!item.suspendedIncoming} /></td>
                                         <td className="panel-td">
                                             <div style={{ display: 'flex', gap: '4px' }}>
+                                                {puedeAbrirBuzon && (
+                                                    <ActionBtn onClick={() => { setError(''); setMotivo(''); setModalBuzon(item.email); }} title="Abrir buzón" hoverBg="#e6f4ee" hoverBorder="#b2dfcf" hoverColor="#1a7f5a">
+                                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                    </ActionBtn>
+                                                )}
+                                                {puedeGestionar && (<>
                                                 <ActionBtn onClick={() => { setError(''); setNuevaPassword(''); setModalPassword(item.email); }} title="Cambiar contraseña" hoverBg="#e8f2f9" hoverBorder="#b3d4ea" hoverColor="#1d6fa4">
                                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                                                 </ActionBtn>
                                                 <ActionBtn onClick={() => { setError(''); setModalEliminar(item.email); }} title="Eliminar cuenta" hoverBg="#fdecea" hoverBorder="#f5c6c2" hoverColor="#c0392b">
                                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                                                 </ActionBtn>
+                                                </>)}
                                             </div>
                                         </td>
                                     </tr>

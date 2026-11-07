@@ -112,7 +112,7 @@ const Usuarios = () => {
                     <Field label="Nombre completo"><input className="dm-input" placeholder="Ej. Juan Pérez" value={formCrear.nombre} onChange={e => setFormCrear({ ...formCrear, nombre: e.target.value })} /></Field>
                     <Field label="Correo electrónico"><input className="dm-input" type="email" placeholder="juan@empresa.com" value={formCrear.email} onChange={e => setFormCrear({ ...formCrear, email: e.target.value })} /></Field>
                     <Field label="Contraseña"><input className="dm-input" type="password" placeholder="Mín. 8 caracteres, mayúscula, número y símbolo" value={formCrear.password} onChange={e => setFormCrear({ ...formCrear, password: e.target.value })} /></Field>
-                    <Field label="Rol"><select className="dm-input" value={formCrear.role} onChange={e => setFormCrear({ ...formCrear, role: e.target.value })}><option value="USER">USER — Acceso estándar</option><option value="ADMIN">ADMIN — Acceso completo</option></select></Field>
+                    <Field label="Rol"><select className="dm-input" value={formCrear.role} onChange={e => setFormCrear({ ...formCrear, role: e.target.value })}><option value="USER">USER — Acceso estándar</option><option value="AUDITOR">AUDITOR — Solo abrir buzones (con registro)</option><option value="ADMIN">ADMIN — Acceso completo</option></select></Field>
                     {error && <div style={{ fontSize: '12px', color: '#c0392b', marginBottom: '8px' }}>{error}</div>}
                     <ModalFooter onClose={() => { setModalCrear(false); setError(''); }} onConfirm={handleCrear} confirmLabel="Crear usuario" loading={actionLoading} />
                 </Modal>
@@ -124,7 +124,7 @@ const Usuarios = () => {
                     <Field label="Nombre completo"><input className="dm-input" value={formEditar.nombre} onChange={e => setFormEditar({ ...formEditar, nombre: e.target.value })} /></Field>
                     <Field label="Correo electrónico"><input className="dm-input" type="email" value={formEditar.email} onChange={e => setFormEditar({ ...formEditar, email: e.target.value })} /></Field>
                     <Field label="Nueva contraseña"><input className="dm-input" type="password" placeholder="Dejar en blanco para no cambiar" value={formEditar.password} onChange={e => setFormEditar({ ...formEditar, password: e.target.value })} /></Field>
-                    <Field label="Rol"><select className="dm-input" value={formEditar.role} onChange={e => setFormEditar({ ...formEditar, role: e.target.value })}><option value="USER">USER — Acceso estándar</option><option value="ADMIN">ADMIN — Acceso completo</option></select></Field>
+                    <Field label="Rol"><select className="dm-input" value={formEditar.role} onChange={e => setFormEditar({ ...formEditar, role: e.target.value })}><option value="USER">USER — Acceso estándar</option><option value="AUDITOR">AUDITOR — Solo abrir buzones (con registro)</option><option value="ADMIN">ADMIN — Acceso completo</option></select></Field>
                     {error && <div style={{ fontSize: '12px', color: '#c0392b', marginBottom: '8px' }}>{error}</div>}
                     <ModalFooter onClose={() => { setModalEditar(null); setError(''); }} onConfirm={handleEditar} confirmLabel="Guardar cambios" loading={actionLoading} />
                 </Modal>
