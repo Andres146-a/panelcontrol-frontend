@@ -27,7 +27,9 @@ export const getEmails = async (token) => {
     });
 
     if (!response.ok) {
-        throw new Error("Failed to fetch emails");
+        const err = new Error("Failed to fetch emails");
+        err.status = response.status; // 401/403 = sesion; otro codigo = falla del servidor o de cPanel
+        throw err;
     }
 
     const data = await response.json();

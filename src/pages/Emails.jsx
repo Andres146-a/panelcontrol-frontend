@@ -52,6 +52,7 @@ const Emails = () => {
     const [loading, setLoading]             = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [error, setError]                 = useState('');
+    const [errorCarga, setErrorCarga]       = useState('');
     const [busqueda, setBusqueda]           = useState('');
     const [modalCrear, setModalCrear]       = useState(false);
     const [modalPassword, setModalPassword] = useState(null);
@@ -65,10 +66,15 @@ const Emails = () => {
     const fetchEmails = async () => {
         if (!token) { navigate("/"); return; }
         setLoading(true);
+        setErrorCarga('');
         try {
             const data = await getEmails(token);
             setEmails(data.filter(e => e.email && e.email.endsWith('@' + DOMINIO_CLIENTE)));
-        } catch { navigate("/"); }
+        } catch (err) {
+            // Solo se cierra la sesion si el token no sirve; un fallo de cPanel no es un logout.
+            if (err.status === 401 || err.status === 403) { navigate("/"); return; }
+            setErrorCarga('No se pudieron cargar las cuentas de correo (error del servidor o de cPanel). Intenta de nuevo en unos minutos.');
+        }
         finally { setLoading(false); }
     };
     useEffect(() => { fetchEmails(); }, []);
@@ -163,6 +169,12 @@ const Emails = () => {
                         + Nueva cuenta
                     </button>
                 </div>
+
+                {errorCarga && (
+                    <div style={{ padding: '10px 20px', fontSize: '13px', color: '#c0392b', background: '#fdecea', borderBottom: '1px solid #f5c6c2' }}>
+                        {errorCarga} <button onClick={fetchEmails} style={{ marginLeft: '8px', border: 'none', background: 'none', color: '#1d6fa4', cursor: 'pointer', fontSize: '13px', textDecoration: 'underline' }}>Reintentar</button>
+                    </div>
+                )}
 
                 {/* BARRA BÚSQUEDA */}
                 <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--color-panel-border)', background: 'var(--color-panel-bg)' }}>
