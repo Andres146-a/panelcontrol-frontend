@@ -74,13 +74,13 @@ const Logs = () => {
                         <div className="panel-title">Registro de actividad</div>
                         <div className="panel-sub">Eventos del sistema</div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ display: 'flex', gap: '6px', marginRight: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', gap: '6px', marginRight: '8px', flexWrap: 'wrap' }}>
                             {['TODOS', 'INFO', 'WARN', 'ERROR'].map(f => (
                                 <FiltroBtn key={f} label={f === 'TODOS' ? 'Todos' : f} activo={filtro === f} onClick={() => setFiltro(f)} />
                             ))}
                         </div>
-                        <div style={{ width: '1px', height: '24px', background: 'var(--color-panel-border)', margin: '0 4px' }} />
+                        <div className="hidden md:block" style={{ width: '1px', height: '24px', background: 'var(--color-panel-border)', margin: '0 4px' }} />
                         <button onClick={() => exportarCSV(logsFiltrados)}
                             style={{ padding: '7px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 500, cursor: 'pointer', background: 'transparent', color: 'var(--color-panel-text2)', border: '1px solid var(--color-panel-border)', fontFamily: 'Inter, sans-serif', display: 'flex', alignItems: 'center', gap: '6px' }}
                             onMouseEnter={e => { e.currentTarget.style.borderColor='#1d6fa4'; e.currentTarget.style.color='#1d6fa4'; }}
@@ -117,7 +117,7 @@ const Logs = () => {
                     const cfg = tipoStyle[log.tipo] || tipoStyle.INFO;
                     return (
                         <div key={log.id}
-                            style={{ padding: '10px 20px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px', color: 'var(--color-panel-text2)', borderBottom: i < logsFiltrados.length - 1 ? '1px solid var(--color-panel-border)' : 'none', lineHeight: 1.6, display: 'flex', alignItems: 'baseline', transition: 'background 0.1s', cursor: 'default' }}
+                            style={{ padding: '10px 20px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px', color: 'var(--color-panel-text2)', borderBottom: i < logsFiltrados.length - 1 ? '1px solid var(--color-panel-border)' : 'none', lineHeight: 1.6, display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', columnGap: '0', transition: 'background 0.1s', cursor: 'default' }}
                             onMouseEnter={e => e.currentTarget.style.background = 'var(--color-panel-bg)'}
                             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                             <span style={{ color: 'var(--color-panel-text3)', marginRight: '12px', whiteSpace: 'nowrap', flexShrink: 0 }}>
@@ -126,7 +126,7 @@ const Logs = () => {
                             <span style={{ color: cfg.color, fontWeight: 700, whiteSpace: 'nowrap', flexShrink: 0 }}>
                                 [{log.tipo}]{log.tipo !== 'ERROR' ? '\u00a0' : ''}
                             </span>
-                            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', color: 'var(--color-panel-text2)', marginLeft: '6px' }}>
+                            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', color: 'var(--color-panel-text2)', marginLeft: '6px', minWidth: 0, flex: '1 1 220px', overflowWrap: 'anywhere' }}>
                                 — {resaltarMensaje(log.mensaje)}
                             </span>
                         </div>

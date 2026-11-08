@@ -96,7 +96,7 @@ const Configuracion = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
                 {/* HEADER */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                     <div>
                         <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-panel-text)' }}>Configuración del sistema</div>
                         <div style={{ fontSize: '12px', color: 'var(--color-panel-text3)', marginTop: '2px' }}>Información general del panel</div>

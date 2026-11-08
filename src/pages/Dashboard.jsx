@@ -77,7 +77,7 @@ if (emailsData.status === 'fulfilled')
 
     return (
         <Layout>
-            <div className="p-7">
+            <div className="p-0 md:p-7">
 
                 {/* ── CARDS ── */}
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-7">

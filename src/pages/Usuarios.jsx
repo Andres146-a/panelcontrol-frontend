@@ -200,7 +200,7 @@ const Usuarios = () => {
                 ) : (
                     <div className="tabla-scroll"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead><tr className="panel-thead">
-                            {['Usuario', 'Rol', 'Acciones'].map(h => <th key={h}>{h}</th>)}
+                            {['Usuario', 'Rol', 'Acciones'].map(h => <th key={h} className={h === 'Rol' ? 'hidden sm:table-cell' : ''} style={{ whiteSpace: 'nowrap' }}>{h}</th>)}
                         </tr></thead>
                         <tbody className="panel-tbody">
                             {usuarios.map((usuario) => (
@@ -210,11 +210,12 @@ const Usuarios = () => {
                                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: avatarColor(usuario.id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>{iniciales(usuario.nombre)}</div>
                                             <div>
                                                 <div className="panel-text-primary" style={{ fontSize: '13.5px' }}>{usuario.nombre}</div>
-                                                <div className="panel-text-secondary">{usuario.email}</div>
+                                                <div className="panel-text-secondary" style={{ wordBreak: 'break-all' }}>{usuario.email}</div>
+                                                <div className="sm:hidden" style={{ fontSize: '10px', fontWeight: 700, marginTop: '3px', fontFamily: "'IBM Plex Mono', monospace", color: usuario.role === 'ADMIN' ? '#3949ab' : '#1d6fa4' }}>{usuario.role}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="panel-td">
+                                    <td className="panel-td hidden sm:table-cell">
                                         <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: '4px', fontSize: '11px', fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", background: usuario.role === 'ADMIN' ? '#e8eaf6' : '#e8f2f9', color: usuario.role === 'ADMIN' ? '#3949ab' : '#1d6fa4', border: `1px solid ${usuario.role === 'ADMIN' ? '#c5cae9' : '#b3d4ea'}` }}>{usuario.role}</span>
                                     </td>
                                     <td className="panel-td">
