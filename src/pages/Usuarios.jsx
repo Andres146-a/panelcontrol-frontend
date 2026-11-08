@@ -111,7 +111,7 @@ const Usuarios = () => {
                 <Modal title="Registrar nuevo usuario" onClose={() => { setModalCrear(false); setError(''); }}>
                     <Field label="Nombre completo"><input className="dm-input" placeholder="Ej. Juan Pérez" value={formCrear.nombre} onChange={e => setFormCrear({ ...formCrear, nombre: e.target.value })} /></Field>
                     <Field label="Correo electrónico"><input className="dm-input" type="email" placeholder="juan@empresa.com" value={formCrear.email} onChange={e => setFormCrear({ ...formCrear, email: e.target.value })} /></Field>
-                    <Field label="Contraseña"><input className="dm-input" type="password" placeholder="Mín. 8 caracteres, mayúscula, número y símbolo" value={formCrear.password} onChange={e => setFormCrear({ ...formCrear, password: e.target.value })} /></Field>
+                    <Field label="Contraseña"><input className="dm-input" type="password" placeholder="Mín. 10 caracteres, mayúscula, número y símbolo (@#$%^&+=)" value={formCrear.password} onChange={e => setFormCrear({ ...formCrear, password: e.target.value })} /></Field>
                     <Field label="Rol"><select className="dm-input" value={formCrear.role} onChange={e => setFormCrear({ ...formCrear, role: e.target.value })}><option value="USER">USER — Acceso estándar</option><option value="AUDITOR">AUDITOR — Solo abrir buzones (con registro)</option><option value="ADMIN">ADMIN — Acceso completo</option></select></Field>
                     {error && <div style={{ fontSize: '12px', color: '#c0392b', marginBottom: '8px' }}>{error}</div>}
                     <ModalFooter onClose={() => { setModalCrear(false); setError(''); }} onConfirm={handleCrear} confirmLabel="Crear usuario" loading={actionLoading} />
@@ -198,7 +198,7 @@ const Usuarios = () => {
                 {loading ? (
                     <div style={{ padding: '48px', textAlign: 'center', fontSize: '13px' }} className="panel-text-secondary">Cargando usuarios...</div>
                 ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <div className="tabla-scroll"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead><tr className="panel-thead">
                             {['Usuario', 'Rol', 'Acciones'].map(h => <th key={h}>{h}</th>)}
                         </tr></thead>
@@ -227,7 +227,7 @@ const Usuarios = () => {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </table></div>
                 )}
             </div>
         </Layout>

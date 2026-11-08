@@ -200,10 +200,10 @@ const Emails = () => {
                         <div className="panel-title">Cuentas de Email</div>
                         <div className="panel-sub">{emailsFiltrados.length} cuentas · {totalActivos} activas · {totalSuspendidos} suspendidas</div>
                     </div>
-                    <button onClick={() => { setError(''); setFormCrear(formCrearInicial); setModalCrear(true); }}
+                    {puedeGestionar && <button onClick={() => { setError(''); setFormCrear(formCrearInicial); setModalCrear(true); }}
                         style={{ padding: '7px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 500, cursor: 'pointer', background: '#1d6fa4', color: '#fff', border: 'none', fontFamily: 'Inter, sans-serif' }}>
                         + Nueva cuenta
-                    </button>
+                    </button>}
                 </div>
 
                 {errorCarga && (
@@ -230,10 +230,10 @@ const Emails = () => {
                         No se encontraron cuentas{busqueda ? ` para "${busqueda}"` : ''}.
                     </div>
                 ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <div className="tabla-scroll"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                             <tr className="panel-thead">
-                                {['Cuenta de correo', 'Login', 'Recepción', 'Acciones'].map(h => <th key={h}>{h}</th>)}
+                                {['Cuenta de correo', 'Login', 'Recepción', 'Acciones'].map(h => <th key={h} className={(h === 'Login' || h === 'Recepción') ? 'hidden sm:table-cell' : ''}>{h}</th>)}
                             </tr>
                         </thead>
                         <tbody className="panel-tbody">
@@ -247,13 +247,14 @@ const Emails = () => {
                                                     {usuario.slice(0, 2).toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-panel-text)', fontFamily: "'IBM Plex Mono', monospace" }}>{item.email}</div>
-                                                    <div style={{ fontSize: '11px', color: 'var(--color-panel-text3)', marginTop: '1px' }}>@{DOMINIO_CLIENTE}</div>
+                                                    <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-panel-text)', fontFamily: "'IBM Plex Mono', monospace", wordBreak: 'break-all' }}>{item.email}</div>
+                                                    <div className="hidden sm:block" style={{ fontSize: '11px', color: 'var(--color-panel-text3)', marginTop: '1px' }}>@{DOMINIO_CLIENTE}</div>
+                                                    <div className="sm:hidden" style={{ fontSize: '11px', marginTop: '2px', color: (item.suspendedLogin || item.suspendedIncoming) ? '#c0392b' : '#1a7f5a' }}>{(item.suspendedLogin || item.suspendedIncoming) ? 'Suspendido' : 'Activo'}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="panel-td"><Badge activo={!item.suspendedLogin} /></td>
-                                        <td className="panel-td"><Badge activo={!item.suspendedIncoming} /></td>
+                                        <td className="panel-td hidden sm:table-cell"><Badge activo={!item.suspendedLogin} /></td>
+                                        <td className="panel-td hidden sm:table-cell"><Badge activo={!item.suspendedIncoming} /></td>
                                         <td className="panel-td">
                                             <div style={{ display: 'flex', gap: '4px' }}>
                                                 {puedeAbrirBuzon && (
@@ -275,7 +276,7 @@ const Emails = () => {
                                 );
                             })}
                         </tbody>
-                    </table>
+                    </table></div>
                 )}
             </div>
         </Layout>

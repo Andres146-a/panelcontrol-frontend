@@ -178,8 +178,8 @@ if (emailsData.status === 'fulfilled')
 )}
 
                 {/* ── GRÁFICO + ACTIVIDAD ── */}
-                <div className="grid grid-cols-3 gap-5 mb-7">
-                    <div className="col-span-2 bg-panel-surface border border-panel-border rounded-xl overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-7">
+                    <div className="lg:col-span-2 bg-panel-surface border border-panel-border rounded-xl overflow-hidden">
                         <div className="px-5 py-4 border-b border-panel-border">
                             <div className="text-sm font-semibold text-panel-text">Actividad del sistema</div>
                             <div className="text-xs text-panel-text3 mt-0.5">Logins por día — últimos 7 días</div>

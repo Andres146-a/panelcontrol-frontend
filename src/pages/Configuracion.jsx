@@ -107,7 +107,7 @@ const Configuracion = () => {
                 </div>
 
                 {/* GRID */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
                     <InfoCard title="General" items={[
                         { label: 'Nombre del sistema', value: config.nombreSistema, mono: true },
                         { label: 'Versión', value: config.version, mono: true, badge: true, badgeBg: '#e8f2f9', badgeBorder: '#b3d4ea', highlight: '#1d6fa4' },

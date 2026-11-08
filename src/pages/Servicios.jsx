@@ -6,7 +6,7 @@ import { getSSLInfo, getEmails, getFTP } from '../services/api';
 const DOMINIO = 'supermetalseconds.com';
 
 const StatCard = ({ title, icon, iconBg, iconColor, children }) => (
-    <div style={{ flex: 1, background: 'var(--color-panel-surface)', border: '1px solid var(--color-panel-border)', borderRadius: 10, padding: 20, boxShadow: '0 1px 3px rgba(26,46,74,0.07)' }}>
+    <div style={{ flex: '1 1 220px', minWidth: 0, background: 'var(--color-panel-surface)', border: '1px solid var(--color-panel-border)', borderRadius: 10, padding: 20, boxShadow: '0 1px 3px rgba(26,46,74,0.07)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
             <div style={{ fontSize: 12, color: 'var(--color-panel-text3)', fontWeight: 500 }}>{title}</div>
             <div style={{ width: 36, height: 36, borderRadius: 8, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: iconColor }}>{icon}</div>
@@ -68,7 +68,7 @@ const Servicios = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
                 {/* TARJETAS */}
-                <div style={{ display: 'flex', gap: 16 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
                     <StatCard title="Certificado SSL" iconBg={sslOk ? '#e8f2f9' : '#fdecea'} iconColor={sslOk ? '#1d6fa4' : '#c0392b'} icon={<IconSSL />}>
                         {loading ? <div style={{ fontSize: 13, color: 'var(--color-panel-text3)' }}>Cargando...</div> : ssl ? (
                             <>

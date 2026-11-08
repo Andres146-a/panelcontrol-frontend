@@ -241,7 +241,7 @@ const Layout = ({ children }) => {
             </aside>
 
             {/* ── MAIN ── */}
-            <main className="md:ml-60 flex-1 flex flex-col min-h-screen">
+            <main className="md:ml-60 flex-1 min-w-0 flex flex-col min-h-screen">
 
                 {/* TOPBAR */}
                 <div className="h-14 bg-panel-surface border-b border-panel-border flex items-center px-4 md:px-7 gap-4 sticky top-0 z-10">
