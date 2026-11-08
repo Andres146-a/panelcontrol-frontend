@@ -104,7 +104,7 @@ if (emailsData.status === 'fulfilled')
         <div className="flex items-center justify-between">
             <div>
                 <p className="text-xs text-panel-text3 uppercase tracking-wide">Certificado SSL</p>
-                <p className="text-2xl font-bold mt-1" style={{ color: loading || !ssl ? '#1a2332' : sslColor(ssl.diasRestantes).color }}>
+                <p className="text-2xl font-bold mt-1" style={{ color: loading || !ssl ? 'var(--color-panel-text)' : sslColor(ssl.diasRestantes).color }}>
                     {loading ? '...' : ssl ? `${ssl.diasRestantes}d` : 'N/A'}
                 </p>
             </div>
