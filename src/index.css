@@ -105,3 +105,15 @@
 }
 .dm-btn-cancel:hover { border-color: var(--color-accent); color: var(--color-accent); }
 .dm-surface2 { background: var(--color-panel-bg); border-radius: 8px; }
+
+/* ── RESPONSIVO ── */
+.tabla-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.dm-modal-bg { max-width: calc(100vw - 32px); max-height: 90vh; overflow-y: auto; }
+@media (max-width: 767px) {
+  .dm-modal-bg { padding: 20px; }
+  .dm-modal-title { margin-bottom: 16px; }
+  .panel-thead th { padding: 8px 12px; }
+  .panel-td { padding: 10px 12px; }
+  .panel-header { padding: 12px 14px; flex-wrap: wrap; gap: 8px; }
+  input, select, textarea { font-size: 16px !important; } /* evita el zoom automatico de iOS */
+}

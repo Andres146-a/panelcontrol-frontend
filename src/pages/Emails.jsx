@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEmails, crearEmail, cambiarPasswordEmail, eliminarEmail } from '../services/api';
+import { getEmails, crearEmail, cambiarPasswordEmail, eliminarEmail, abrirBuzon } from '../services/api';
 import Layout from '../components/Layout';
 
 const DOMINIO_CLIENTE = 'supermetalseconds.com';
@@ -52,6 +52,7 @@ const Emails = () => {
     const [loading, setLoading]             = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [error, setError]                 = useState('');
+    const [errorCarga, setErrorCarga]       = useState('');
     const [busqueda, setBusqueda]           = useState('');
     const [modalCrear, setModalCrear]       = useState(false);
     const [modalPassword, setModalPassword] = useState(null);
@@ -59,16 +60,26 @@ const Emails = () => {
     const formCrearInicial = { email: '', password: '', quota: 0 };
     const [formCrear, setFormCrear]         = useState(formCrearInicial);
     const [nuevaPassword, setNuevaPassword] = useState('');
+    const [modalBuzon, setModalBuzon]       = useState(null);
+    const [motivo, setMotivo]               = useState('');
     const navigate = useNavigate();
     const token    = sessionStorage.getItem("token");
+    const rol      = sessionStorage.getItem("rol") || 'USER';
+    const puedeAbrirBuzon = rol === 'ADMIN' || rol === 'AUDITOR';
+    const puedeGestionar  = rol === 'ADMIN';
 
     const fetchEmails = async () => {
         if (!token) { navigate("/"); return; }
         setLoading(true);
+        setErrorCarga('');
         try {
             const data = await getEmails(token);
             setEmails(data.filter(e => e.email && e.email.endsWith('@' + DOMINIO_CLIENTE)));
-        } catch { navigate("/"); }
+        } catch (err) {
+            // Solo se cierra la sesion si el token no sirve; un fallo de cPanel no es un logout.
+            if (err.status === 401 || err.status === 403) { navigate("/"); return; }
+            setErrorCarga('No se pudieron cargar las cuentas de correo (error del servidor o de cPanel). Intenta de nuevo en unos minutos.');
+        }
         finally { setLoading(false); }
     };
     useEffect(() => { fetchEmails(); }, []);
@@ -93,6 +104,23 @@ const Emails = () => {
         setActionLoading(true);
         try { await cambiarPasswordEmail(token, modalPassword, nuevaPassword); setModalPassword(null); setNuevaPassword(''); }
         catch (err) { setError(err.message || 'Error al cambiar la contraseña.'); }
+        finally { setActionLoading(false); }
+    };
+
+    const handleAbrirBuzon = async () => {
+        setError('');
+        if (motivo.trim().length < 10) { setError('Describe el motivo (mínimo 10 caracteres).'); return; }
+        setActionLoading(true);
+        // La ventana se abre antes del await para que el navegador no bloquee el popup.
+        const ventana = window.open('', '_blank');
+        try {
+            const url = await abrirBuzon(token, modalBuzon, motivo.trim());
+            if (ventana) { ventana.opener = null; ventana.location.href = url; } else { window.location.href = url; }
+            setModalBuzon(null); setMotivo('');
+        } catch (err) {
+            if (ventana) ventana.close();
+            setError(err.message || 'No se pudo abrir el buzón.');
+        }
         finally { setActionLoading(false); }
     };
 
@@ -136,6 +164,20 @@ const Emails = () => {
                 </Modal>
             )}
 
+            {/* MODAL ABRIR BUZON */}
+            {modalBuzon && (
+                <Modal title="Abrir buzón (acceso supervisado)" onClose={() => { setModalBuzon(null); setError(''); setMotivo(''); }}>
+                    <div className="dm-surface2" style={{ fontSize: '13px', color: 'var(--color-panel-text3)', marginBottom: '16px', padding: '10px 14px', fontFamily: "'IBM Plex Mono', monospace" }}>
+                        {modalBuzon}
+                    </div>
+                    <Field label="Motivo del acceso" hint="Obligatorio. Queda registrado junto con tu usuario, la fecha y tu IP.">
+                        <textarea className="dm-input" rows={3} maxLength={300} placeholder="Ej: Revisión por reclamo del cliente X, orden de gerencia" value={motivo} onChange={e => setMotivo(e.target.value)} />
+                    </Field>
+                    {error && <div style={{ fontSize: '12px', color: '#c0392b', marginBottom: '8px' }}>{error}</div>}
+                    <ModalFooter onClose={() => { setModalBuzon(null); setError(''); setMotivo(''); }} onConfirm={handleAbrirBuzon} confirmLabel="Abrir buzón" loading={actionLoading} />
+                </Modal>
+            )}
+
             {/* MODAL ELIMINAR */}
             {modalEliminar && (
                 <Modal title="Eliminar cuenta de correo" onClose={() => { setModalEliminar(null); setError(''); }}>
@@ -158,11 +200,17 @@ const Emails = () => {
                         <div className="panel-title">Cuentas de Email</div>
                         <div className="panel-sub">{emailsFiltrados.length} cuentas · {totalActivos} activas · {totalSuspendidos} suspendidas</div>
                     </div>
-                    <button onClick={() => { setError(''); setFormCrear(formCrearInicial); setModalCrear(true); }}
+                    {puedeGestionar && <button onClick={() => { setError(''); setFormCrear(formCrearInicial); setModalCrear(true); }}
                         style={{ padding: '7px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 500, cursor: 'pointer', background: '#1d6fa4', color: '#fff', border: 'none', fontFamily: 'Inter, sans-serif' }}>
                         + Nueva cuenta
-                    </button>
+                    </button>}
                 </div>
+
+                {errorCarga && (
+                    <div style={{ padding: '10px 20px', fontSize: '13px', color: '#c0392b', background: '#fdecea', borderBottom: '1px solid #f5c6c2' }}>
+                        {errorCarga} <button onClick={fetchEmails} style={{ marginLeft: '8px', border: 'none', background: 'none', color: '#1d6fa4', cursor: 'pointer', fontSize: '13px', textDecoration: 'underline' }}>Reintentar</button>
+                    </div>
+                )}
 
                 {/* BARRA BÚSQUEDA */}
                 <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--color-panel-border)', background: 'var(--color-panel-bg)' }}>
@@ -182,10 +230,10 @@ const Emails = () => {
                         No se encontraron cuentas{busqueda ? ` para "${busqueda}"` : ''}.
                     </div>
                 ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <div className="tabla-scroll"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                             <tr className="panel-thead">
-                                {['Cuenta de correo', 'Login', 'Recepción', 'Acciones'].map(h => <th key={h}>{h}</th>)}
+                                {['Cuenta de correo', 'Login', 'Recepción', 'Acciones'].map(h => <th key={h} className={(h === 'Login' || h === 'Recepción') ? 'hidden sm:table-cell' : ''}>{h}</th>)}
                             </tr>
                         </thead>
                         <tbody className="panel-tbody">
@@ -199,28 +247,36 @@ const Emails = () => {
                                                     {usuario.slice(0, 2).toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-panel-text)', fontFamily: "'IBM Plex Mono', monospace" }}>{item.email}</div>
-                                                    <div style={{ fontSize: '11px', color: 'var(--color-panel-text3)', marginTop: '1px' }}>@{DOMINIO_CLIENTE}</div>
+                                                    <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-panel-text)', fontFamily: "'IBM Plex Mono', monospace", wordBreak: 'break-all' }}>{item.email}</div>
+                                                    <div className="hidden sm:block" style={{ fontSize: '11px', color: 'var(--color-panel-text3)', marginTop: '1px' }}>@{DOMINIO_CLIENTE}</div>
+                                                    <div className="sm:hidden" style={{ fontSize: '11px', marginTop: '2px', color: (item.suspendedLogin || item.suspendedIncoming) ? '#c0392b' : '#1a7f5a' }}>{(item.suspendedLogin || item.suspendedIncoming) ? 'Suspendido' : 'Activo'}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="panel-td"><Badge activo={!item.suspendedLogin} /></td>
-                                        <td className="panel-td"><Badge activo={!item.suspendedIncoming} /></td>
+                                        <td className="panel-td hidden sm:table-cell"><Badge activo={!item.suspendedLogin} /></td>
+                                        <td className="panel-td hidden sm:table-cell"><Badge activo={!item.suspendedIncoming} /></td>
                                         <td className="panel-td">
                                             <div style={{ display: 'flex', gap: '4px' }}>
+                                                {puedeAbrirBuzon && (
+                                                    <ActionBtn onClick={() => { setError(''); setMotivo(''); setModalBuzon(item.email); }} title="Abrir buzón" hoverBg="#e6f4ee" hoverBorder="#b2dfcf" hoverColor="#1a7f5a">
+                                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                    </ActionBtn>
+                                                )}
+                                                {puedeGestionar && (<>
                                                 <ActionBtn onClick={() => { setError(''); setNuevaPassword(''); setModalPassword(item.email); }} title="Cambiar contraseña" hoverBg="#e8f2f9" hoverBorder="#b3d4ea" hoverColor="#1d6fa4">
                                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                                                 </ActionBtn>
                                                 <ActionBtn onClick={() => { setError(''); setModalEliminar(item.email); }} title="Eliminar cuenta" hoverBg="#fdecea" hoverBorder="#f5c6c2" hoverColor="#c0392b">
                                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                                                 </ActionBtn>
+                                                </>)}
                                             </div>
                                         </td>
                                     </tr>
                                 );
                             })}
                         </tbody>
-                    </table>
+                    </table></div>
                 )}
             </div>
         </Layout>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../services/api';
+import { login, getMe } from '../services/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +14,10 @@ const Login = () => {
     try {
       const token = await login(email, password);
       sessionStorage.setItem("token", token);
-      navigate("/dashboard");
+      let rol = "USER";
+      try { rol = (await getMe(token)).role; } catch { /* sin rol: se trata como USER */ }
+      sessionStorage.setItem("rol", rol);
+      navigate(rol === "AUDITOR" ? "/emails" : "/dashboard");
     } catch (err) {
       setError("Credenciales incorrectas. Intenta de nuevo.");
     }

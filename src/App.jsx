@@ -7,6 +7,7 @@ import Logs from './pages/Logs';
 import Servicios from './pages/Servicios';  
 import Seguridad from './pages/Seguridad';
 import Configuracion from './pages/Configuracion';
+import Accesos from './pages/Accesos';
 function App() {
     return (
         <BrowserRouter>
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/servicios" element={<Servicios/>} />
                 <Route path="/seguridad" element={<Seguridad/>} />
                 <Route path="/configuracion" element={<Configuracion/>} />
+                <Route path="/accesos" element={<Accesos/>} />
 
             </Routes>
         </BrowserRouter>

@@ -77,7 +77,7 @@ if (emailsData.status === 'fulfilled')
 
     return (
         <Layout>
-            <div className="p-7">
+            <div className="p-0 md:p-7">
 
                 {/* ── CARDS ── */}
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
@@ -104,7 +104,7 @@ if (emailsData.status === 'fulfilled')
         <div className="flex items-center justify-between">
             <div>
                 <p className="text-xs text-panel-text3 uppercase tracking-wide">Certificado SSL</p>
-                <p className="text-2xl font-bold mt-1" style={{ color: loading || !ssl ? '#1a2332' : sslColor(ssl.diasRestantes).color }}>
+                <p className="text-2xl font-bold mt-1" style={{ color: loading || !ssl ? 'var(--color-panel-text)' : sslColor(ssl.diasRestantes).color }}>
                     {loading ? '...' : ssl ? `${ssl.diasRestantes}d` : 'N/A'}
                 </p>
             </div>
@@ -178,8 +178,8 @@ if (emailsData.status === 'fulfilled')
 )}
 
                 {/* ── GRÁFICO + ACTIVIDAD ── */}
-                <div className="grid grid-cols-3 gap-5 mb-7">
-                    <div className="col-span-2 bg-panel-surface border border-panel-border rounded-xl overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-7">
+                    <div className="lg:col-span-2 bg-panel-surface border border-panel-border rounded-xl overflow-hidden">
                         <div className="px-5 py-4 border-b border-panel-border">
                             <div className="text-sm font-semibold text-panel-text">Actividad del sistema</div>
                             <div className="text-xs text-panel-text3 mt-0.5">Logins por día — últimos 7 días</div>
@@ -216,18 +216,14 @@ if (emailsData.status === 'fulfilled')
                                 </div>
                             )}
                         </div>
-                        <div className="grid grid-cols-3 border-t border-panel-border">
+                        <div className="grid grid-cols-2 border-t border-panel-border">
                             <div className="px-5 py-4 border-r border-panel-border">
                                 <div className="text-xs font-semibold text-panel-text3 uppercase tracking-wide mb-1">Logins hoy</div>
                                 <div className="text-xl font-bold text-panel-text">{loading ? '...' : loginsHoy}</div>
                             </div>
-                            <div className="px-5 py-4 border-r border-panel-border">
-                                <div className="text-xs font-semibold text-panel-text3 uppercase tracking-wide mb-1">Usuarios activos</div>
-                                <div className="text-xl font-bold text-panel-text">{stats.totalUsuarios || 0}</div>
-                            </div>
                             <div className="px-5 py-4">
-                                <div className="text-xs font-semibold text-panel-text3 uppercase tracking-wide mb-1">Uptime</div>
-                                <div className="text-xl font-bold text-panel-text">99.8%</div>
+                                <div className="text-xs font-semibold text-panel-text3 uppercase tracking-wide mb-1">Usuarios del panel</div>
+                                <div className="text-xl font-bold text-panel-text">{stats.totalUsuarios || 0}</div>
                             </div>
                         </div>
                     </div>

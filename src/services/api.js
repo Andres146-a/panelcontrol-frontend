@@ -1,5 +1,5 @@
 import { data } from "react-router-dom";
-const BASE_URL = "https://panelcontrol-backend-production.up.railway.app";
+import { BASE_URL } from "../config";
 
 export const login = async (email, password) => {
     const response = await fetch(`${BASE_URL}/auth/login`, {
@@ -27,7 +27,9 @@ export const getEmails = async (token) => {
     });
 
     if (!response.ok) {
-        throw new Error("Failed to fetch emails");
+        const err = new Error("Failed to fetch emails");
+        err.status = response.status; // 401/403 = sesion; otro codigo = falla del servidor o de cPanel
+        throw err;
     }
 
     const data = await response.json();
@@ -231,5 +233,30 @@ export const getLoginsPorDia = async (token) => {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch logins por dia');
+    return response.json();
+};
+
+export const getMe = async (token) => {
+    const response = await fetch(`${BASE_URL}/usuarios/me`, { headers: { "Authorization": `Bearer ${token}` } });
+    if (!response.ok) throw new Error("No se pudo obtener el usuario");
+    return response.json();
+};
+
+export const abrirBuzon = async (token, email, motivo) => {
+    const response = await fetch(`${BASE_URL}/cpanel/emails/${encodeURIComponent(email)}/webmail-sesion`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ motivo }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.error || data.message || "No se pudo abrir el buzón");
+    }
+    return data.url;
+};
+
+export const getAccesosBuzon = async (token) => {
+    const response = await fetch(`${BASE_URL}/cpanel/accesos-buzon`, { headers: { "Authorization": `Bearer ${token}` } });
+    if (!response.ok) throw new Error("No se pudo cargar el registro de accesos");
     return response.json();
 };

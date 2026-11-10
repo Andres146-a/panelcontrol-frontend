@@ -111,8 +111,8 @@ const Usuarios = () => {
                 <Modal title="Registrar nuevo usuario" onClose={() => { setModalCrear(false); setError(''); }}>
                     <Field label="Nombre completo"><input className="dm-input" placeholder="Ej. Juan Pérez" value={formCrear.nombre} onChange={e => setFormCrear({ ...formCrear, nombre: e.target.value })} /></Field>
                     <Field label="Correo electrónico"><input className="dm-input" type="email" placeholder="juan@empresa.com" value={formCrear.email} onChange={e => setFormCrear({ ...formCrear, email: e.target.value })} /></Field>
-                    <Field label="Contraseña"><input className="dm-input" type="password" placeholder="Mín. 8 caracteres, mayúscula, número y símbolo" value={formCrear.password} onChange={e => setFormCrear({ ...formCrear, password: e.target.value })} /></Field>
-                    <Field label="Rol"><select className="dm-input" value={formCrear.role} onChange={e => setFormCrear({ ...formCrear, role: e.target.value })}><option value="USER">USER — Acceso estándar</option><option value="ADMIN">ADMIN — Acceso completo</option></select></Field>
+                    <Field label="Contraseña"><input className="dm-input" type="password" placeholder="Mín. 10 caracteres, mayúscula, número y símbolo (@#$%^&+=)" value={formCrear.password} onChange={e => setFormCrear({ ...formCrear, password: e.target.value })} /></Field>
+                    <Field label="Rol"><select className="dm-input" value={formCrear.role} onChange={e => setFormCrear({ ...formCrear, role: e.target.value })}><option value="USER">USER — Acceso estándar</option><option value="AUDITOR">AUDITOR — Solo abrir buzones (con registro)</option><option value="ADMIN">ADMIN — Acceso completo</option></select></Field>
                     {error && <div style={{ fontSize: '12px', color: '#c0392b', marginBottom: '8px' }}>{error}</div>}
                     <ModalFooter onClose={() => { setModalCrear(false); setError(''); }} onConfirm={handleCrear} confirmLabel="Crear usuario" loading={actionLoading} />
                 </Modal>
@@ -124,7 +124,7 @@ const Usuarios = () => {
                     <Field label="Nombre completo"><input className="dm-input" value={formEditar.nombre} onChange={e => setFormEditar({ ...formEditar, nombre: e.target.value })} /></Field>
                     <Field label="Correo electrónico"><input className="dm-input" type="email" value={formEditar.email} onChange={e => setFormEditar({ ...formEditar, email: e.target.value })} /></Field>
                     <Field label="Nueva contraseña"><input className="dm-input" type="password" placeholder="Dejar en blanco para no cambiar" value={formEditar.password} onChange={e => setFormEditar({ ...formEditar, password: e.target.value })} /></Field>
-                    <Field label="Rol"><select className="dm-input" value={formEditar.role} onChange={e => setFormEditar({ ...formEditar, role: e.target.value })}><option value="USER">USER — Acceso estándar</option><option value="ADMIN">ADMIN — Acceso completo</option></select></Field>
+                    <Field label="Rol"><select className="dm-input" value={formEditar.role} onChange={e => setFormEditar({ ...formEditar, role: e.target.value })}><option value="USER">USER — Acceso estándar</option><option value="AUDITOR">AUDITOR — Solo abrir buzones (con registro)</option><option value="ADMIN">ADMIN — Acceso completo</option></select></Field>
                     {error && <div style={{ fontSize: '12px', color: '#c0392b', marginBottom: '8px' }}>{error}</div>}
                     <ModalFooter onClose={() => { setModalEditar(null); setError(''); }} onConfirm={handleEditar} confirmLabel="Guardar cambios" loading={actionLoading} />
                 </Modal>
@@ -198,9 +198,9 @@ const Usuarios = () => {
                 {loading ? (
                     <div style={{ padding: '48px', textAlign: 'center', fontSize: '13px' }} className="panel-text-secondary">Cargando usuarios...</div>
                 ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <div className="tabla-scroll"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead><tr className="panel-thead">
-                            {['Usuario', 'Rol', 'Acciones'].map(h => <th key={h}>{h}</th>)}
+                            {['Usuario', 'Rol', 'Acciones'].map(h => <th key={h} className={h === 'Rol' ? 'hidden sm:table-cell' : ''} style={{ whiteSpace: 'nowrap' }}>{h}</th>)}
                         </tr></thead>
                         <tbody className="panel-tbody">
                             {usuarios.map((usuario) => (
@@ -210,11 +210,12 @@ const Usuarios = () => {
                                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: avatarColor(usuario.id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>{iniciales(usuario.nombre)}</div>
                                             <div>
                                                 <div className="panel-text-primary" style={{ fontSize: '13.5px' }}>{usuario.nombre}</div>
-                                                <div className="panel-text-secondary">{usuario.email}</div>
+                                                <div className="panel-text-secondary" style={{ wordBreak: 'break-all' }}>{usuario.email}</div>
+                                                <div className="sm:hidden" style={{ fontSize: '10px', fontWeight: 700, marginTop: '3px', fontFamily: "'IBM Plex Mono', monospace", color: usuario.role === 'ADMIN' ? '#3949ab' : '#1d6fa4' }}>{usuario.role}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="panel-td">
+                                    <td className="panel-td hidden sm:table-cell">
                                         <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: '4px', fontSize: '11px', fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", background: usuario.role === 'ADMIN' ? '#e8eaf6' : '#e8f2f9', color: usuario.role === 'ADMIN' ? '#3949ab' : '#1d6fa4', border: `1px solid ${usuario.role === 'ADMIN' ? '#c5cae9' : '#b3d4ea'}` }}>{usuario.role}</span>
                                     </td>
                                     <td className="panel-td">
@@ -227,7 +228,7 @@ const Usuarios = () => {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </table></div>
                 )}
             </div>
         </Layout>

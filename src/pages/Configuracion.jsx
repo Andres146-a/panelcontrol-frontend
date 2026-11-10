@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 
-const BASE_URL = "https://panelcontrol-backend-production.up.railway.app";
+import { BASE_URL } from "../config";
 
 const getConfiguracion = async (token) => {
     const response = await fetch(`${BASE_URL}/configuracion`, {
@@ -96,7 +96,7 @@ const Configuracion = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
                 {/* HEADER */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                     <div>
                         <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-panel-text)' }}>Configuración del sistema</div>
                         <div style={{ fontSize: '12px', color: 'var(--color-panel-text3)', marginTop: '2px' }}>Información general del panel</div>
@@ -107,7 +107,7 @@ const Configuracion = () => {
                 </div>
 
                 {/* GRID */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
                     <InfoCard title="General" items={[
                         { label: 'Nombre del sistema', value: config.nombreSistema, mono: true },
                         { label: 'Versión', value: config.version, mono: true, badge: true, badgeBg: '#e8f2f9', badgeBorder: '#b3d4ea', highlight: '#1d6fa4' },
@@ -127,7 +127,7 @@ const Configuracion = () => {
                 <InfoCard title="Información del sistema" items={[
                     { label: 'Framework', value: 'Spring Boot 3.5', mono: true },
                     { label: 'Lenguaje', value: 'Java 21', mono: true },
-                    { label: 'Base de datos', value: 'SQL Server', mono: true },
+                    { label: 'Base de datos', value: 'PostgreSQL', mono: true },
                     { label: 'Frontend', value: 'React + Vite + Tailwind CSS v4', mono: true },
                     { label: 'Integración cPanel', value: 'UAPI · Puerto 2083', mono: true },
                 ]} />
