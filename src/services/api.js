@@ -80,25 +80,7 @@ export const getLogs = async (token) => {
     return data;
 }
 
-export const getServicios = async (token) => {
-    const response = await fetch(`${BASE_URL}/servicios`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-        },
-    });
-    if (!response.ok) throw new Error("Failed to fetch servicios");
-    return await response.json();
-}
 
-export const toggleServicio = async (token, id) => {
-    const response = await fetch(`${BASE_URL}/servicios/${id}/toggle`, {
-        method: "PUT",
-        headers: { "Authorization": `Bearer ${token}` },
-    });
-    if (!response.ok) throw new Error("Failed to toggle servicio");
-    return await response.json();
-}
 export const crearUsuario = async (token, usuarioData) => {
     const response = await fetch(`${BASE_URL}/usuarios`, {
         method: "POST",
@@ -214,27 +196,6 @@ export const desbloquearIp = async (token, ip) => {
     return response.json();
 }
 
-export const getSSLInfo = async (token) => {
-    const response = await fetch(`${BASE_URL}/cpanel/ssl`, {
-        headers: { "Authorization": `Bearer ${token}` },
-    });
-    if (!response.ok) throw new Error("Failed to fetch SSL info");
-    return response.json();
-}
-export const getFTP = async (token) => {
-    const res = await fetch(`${BASE_URL}/cpanel/ftp`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error('Error al obtener FTP');
-    return res.json();
-};
-export const getLoginsPorDia = async (token) => {
-    const response = await fetch(`${BASE_URL}/dashboard/logins-por-dia`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) throw new Error('Failed to fetch logins por dia');
-    return response.json();
-};
 
 export const getMe = async (token) => {
     const response = await fetch(`${BASE_URL}/usuarios/me`, { headers: { "Authorization": `Bearer ${token}` } });
@@ -258,5 +219,17 @@ export const abrirBuzon = async (token, email, motivo) => {
 export const getAccesosBuzon = async (token) => {
     const response = await fetch(`${BASE_URL}/cpanel/accesos-buzon`, { headers: { "Authorization": `Bearer ${token}` } });
     if (!response.ok) throw new Error("No se pudo cargar el registro de accesos");
+    return response.json();
+};
+
+export const getResumenCuentas = async (token) => {
+    const response = await fetch(`${BASE_URL}/cpanel/emails/resumen`, { headers: { "Authorization": `Bearer ${token}` } });
+    if (!response.ok) throw new Error("No se pudo cargar el resumen de cuentas");
+    return response.json();
+};
+
+export const getAccesosPorDia = async (token) => {
+    const response = await fetch(`${BASE_URL}/dashboard/accesos-por-dia`, { headers: { "Authorization": `Bearer ${token}` } });
+    if (!response.ok) throw new Error("No se pudo cargar accesos por dia");
     return response.json();
 };

@@ -71,21 +71,18 @@ const useBusqueda = (token) => {
         if (q.length < 2) { setResultados(null); return; }
         setBuscando(true);
         try {
-            const [uRes, eRes, sRes, lRes] = await Promise.all([
+            const [uRes, eRes, lRes] = await Promise.all([
                 fetch(`${BASE_URL}/usuarios`,      { headers: { Authorization: `Bearer ${token}` } }),
                 fetch(`${BASE_URL}/cpanel/emails`, { headers: { Authorization: `Bearer ${token}` } }),
-                fetch(`${BASE_URL}/servicios`,     { headers: { Authorization: `Bearer ${token}` } }),
                 fetch(`${BASE_URL}/logs`,          { headers: { Authorization: `Bearer ${token}` } }),
             ]);
             const usuarios  = uRes.ok ? await uRes.json() : [];
             const emails    = eRes.ok ? await eRes.json() : [];
-            const servicios = sRes.ok ? await sRes.json() : [];
             const logs      = lRes.ok ? await lRes.json() : [];
             const q_ = q.toLowerCase();
             setResultados({
                 usuarios:  usuarios.filter(u => u.nombre?.toLowerCase().includes(q_) || u.email?.toLowerCase().includes(q_)).slice(0, 3),
                 emails:    emails.filter(e => e.email?.toLowerCase().includes(q_) && e.email.includes('@supermetalseconds.com')).slice(0, 3),
-                servicios: servicios.filter(s => s.nombre?.toLowerCase().includes(q_)).slice(0, 3),
                 logs:      logs.filter(l => l.mensaje?.toLowerCase().includes(q_)).slice(0, 3),
             });
         } catch { setResultados(null); }
@@ -128,8 +125,8 @@ const Layout = ({ children }) => {
 
     const titles = {
         '/dashboard': 'Dashboard', '/emails': 'Emails', '/usuarios': 'Usuarios',
-        '/servicios': 'Gestión de Servicios', '/logs': 'Logs',
-        '/seguridad': 'Seguridad', '/accesos': 'Accesos a buzones', '/configuracion': 'Configuración',
+        '/logs': 'Logs',
+        '/seguridad': 'Seguridad', '/accesos': 'Accesos a buzones',
     };
     const currentTitle = titles[location.pathname] || 'Dashboard';
     const handleLogout = () => { sessionStorage.clear(); navigate('/'); };
@@ -225,12 +222,10 @@ const Layout = ({ children }) => {
                     {!esAuditor && <NavItem path="/dashboard" label="Dashboard" icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>}/>}
                     <NavItem path="/emails" label="Emails" icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>}/>
                     {!esAuditor && <NavItem path="/usuarios" label="Usuarios" icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>}/>}
-                    {!esAuditor && <NavItem path="/servicios" label="Servicios" icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>}/>}
                     {!esAuditor && <div className="px-4 py-2 text-white/30 text-xs font-semibold tracking-widest uppercase mt-3">Sistema</div>}
                     {!esAuditor && <NavItem path="/logs" label="Logs" icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>}/>}
                     {esAdmin && <NavItem path="/accesos" label="Accesos a buzones" icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>}/>}
                     {!esAuditor && <NavItem path="/seguridad" label="Seguridad" icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>}/>}
-                    {!esAuditor && <NavItem path="/configuracion" label="Configuración" icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>}/>}
                 </nav>
                 <div className="p-4 border-t border-white/10">
                     <button onClick={handleLogout} className="w-full text-left px-3 py-2 rounded-md text-white/55 text-sm hover:bg-white/10 transition-colors flex items-center gap-2">
@@ -270,7 +265,6 @@ const Layout = ({ children }) => {
                                         <div style={{ maxHeight: '380px', overflowY: 'auto' }}>
                                             <SeccionResultados titulo="Usuarios" items={resultados.usuarios} renderItem={(u, i) => <ResultadoRow key={i} onClick={() => irA('/usuarios')} left={u.nombre} sub={u.email} right={u.role} />}/>
                                             <SeccionResultados titulo="Emails" items={resultados.emails} renderItem={(e, i) => <ResultadoRow key={i} onClick={() => irA('/emails')} left={e.email} right={e.suspendedLogin ? 'Suspendido' : 'Activo'} />}/>
-                                            <SeccionResultados titulo="Servicios" items={resultados.servicios} renderItem={(s, i) => <ResultadoRow key={i} onClick={() => irA('/servicios')} left={s.nombre} sub={s.descripcion} right={s.activo ? 'Activo' : 'Inactivo'} />}/>
                                             <SeccionResultados titulo="Logs" items={resultados.logs} renderItem={(l, i) => <ResultadoRow key={i} onClick={() => irA('/logs')} left={l.mensaje.length > 50 ? l.mensaje.slice(0,50)+'...' : l.mensaje} right={l.tipo} />}/>
                                         </div>
                                     )}
@@ -346,9 +340,7 @@ const Layout = ({ children }) => {
                 {!esAuditor && <BottomNavItem path="/dashboard" icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>}/>}
                 <BottomNavItem path="/emails" icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>}/>
                 {!esAuditor && <BottomNavItem path="/usuarios" icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>}/>}
-                {!esAuditor && <BottomNavItem path="/servicios" icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>}/>}
                 {!esAuditor && <BottomNavItem path="/logs" icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>}/>}
-                {!esAuditor && <BottomNavItem path="/configuracion" icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>}/>}
             </nav>
 
             <style>{`@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }`}</style>

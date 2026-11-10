@@ -4,9 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Emails from './pages/Emails';
 import Usuaruis from './pages/Usuarios';
 import Logs from './pages/Logs';
-import Servicios from './pages/Servicios';  
 import Seguridad from './pages/Seguridad';
-import Configuracion from './pages/Configuracion';
 import Accesos from './pages/Accesos';
 function App() {
     return (
@@ -17,9 +15,7 @@ function App() {
                 <Route path="/emails" element={<Emails/>} />
                 <Route path="/usuarios" element={<Usuaruis/>} />
                 <Route path="/logs" element={<Logs/>} />
-                <Route path="/servicios" element={<Servicios/>} />
                 <Route path="/seguridad" element={<Seguridad/>} />
-                <Route path="/configuracion" element={<Configuracion/>} />
                 <Route path="/accesos" element={<Accesos/>} />
 
             </Routes>

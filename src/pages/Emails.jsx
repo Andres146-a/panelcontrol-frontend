@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEmails, crearEmail, cambiarPasswordEmail, eliminarEmail, abrirBuzon } from '../services/api';
+import { getEmails, crearEmail, cambiarPasswordEmail, eliminarEmail, abrirBuzon, getResumenCuentas } from '../services/api';
 import Layout from '../components/Layout';
 
 const DOMINIO_CLIENTE = 'supermetalseconds.com';
@@ -62,6 +62,7 @@ const Emails = () => {
     const [nuevaPassword, setNuevaPassword] = useState('');
     const [modalBuzon, setModalBuzon]       = useState(null);
     const [motivo, setMotivo]               = useState('');
+    const [resumen, setResumen]         = useState(null);
     const navigate = useNavigate();
     const token    = sessionStorage.getItem("token");
     const rol      = sessionStorage.getItem("rol") || 'USER';
@@ -82,7 +83,13 @@ const Emails = () => {
         }
         finally { setLoading(false); }
     };
-    useEffect(() => { fetchEmails(); }, []);
+    useEffect(() => {
+        fetchEmails();
+        if (token) getResumenCuentas(token).then(setResumen).catch(() => setResumen(null));
+    }, []);
+
+    const limiteTxt = !resumen ? '-' : resumen.ilimitado ? 'Ilimitadas' : resumen.limite != null ? `${resumen.limite}` : '-';
+    const disponiblesTxt = !resumen ? '-' : resumen.ilimitado ? 'Sin límite' : resumen.limite != null ? `${Math.max(resumen.limite - (resumen.totalCuenta ?? resumen.cuentasDominio), 0)}` : '-';
 
     const emailsFiltrados  = emails.filter(e => e.email.toLowerCase().includes(busqueda.toLowerCase()));
     const totalActivos     = emailsFiltrados.filter(e => !e.suspendedLogin).length;
@@ -204,6 +211,12 @@ const Emails = () => {
                         style={{ padding: '7px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 500, cursor: 'pointer', background: '#1d6fa4', color: '#fff', border: 'none', fontFamily: 'Inter, sans-serif' }}>
                         + Nueva cuenta
                     </button>}
+                </div>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 28px', padding: '10px 20px', fontSize: '13px', borderBottom: '1px solid var(--color-panel-border)' }}>
+                    <span className="panel-text-secondary">Cuentas creadas: <b>{resumen ? (resumen.cuentasDominio ?? '-') : emails.length}</b></span>
+                    <span className="panel-text-secondary">Límite del plan: <b>{limiteTxt}</b></span>
+                    <span className="panel-text-secondary">Disponibles: <b>{disponiblesTxt}</b></span>
                 </div>
 
                 {errorCarga && (
